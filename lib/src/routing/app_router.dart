@@ -37,6 +37,7 @@ final goRouter = GoRouter(
         ),
         GoRoute(
           path: 'cart',
+          name: AppRoute.cart.name,
           builder: (context, state) => const ShoppingCartScreen(),
           pageBuilder: (context, state) => MaterialPage(
             key: state.pageKey,
