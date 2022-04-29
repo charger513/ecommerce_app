@@ -17,7 +17,7 @@ class ProductsGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsListValue = ref.watch(productListFutureProvider);
+    final productsListValue = ref.watch(productListStreamProvider);
     return productsListValue.when(
       data: (products) => products.isEmpty
           ? Center(
