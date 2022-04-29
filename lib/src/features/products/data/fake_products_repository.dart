@@ -17,16 +17,26 @@ class FakeProductsRepository {
     return Future.value(_products);
   }
 
-  Stream<List<Product>> watchProductsLists() {
+  Stream<List<Product>> watchProductsList() {
     return Stream.value(_products);
   }
 
   Stream<Product?> watchProduct(String id) {
-    return watchProductsLists()
+    return watchProductsList()
         .map((products) => products.firstWhere((product) => product.id == id));
   }
 }
 
 final productsRepositoryProvider = Provider<FakeProductsRepository>((ref) {
   return FakeProductsRepository();
+});
+
+final productListStreamProvider = StreamProvider<List<Product>>((ref) {
+  final productsRepository = ref.watch(productsRepositoryProvider);
+  return productsRepository.watchProductsList();
+});
+
+final productListFutureProvider = FutureProvider<List<Product>>((ref) {
+  final productsRepository = ref.watch(productsRepositoryProvider);
+  return productsRepository.fetchProductsList();
 });
