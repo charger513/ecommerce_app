@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeProductsRepository {
@@ -33,17 +34,26 @@ final productsRepositoryProvider = Provider<FakeProductsRepository>((ref) {
   return FakeProductsRepository();
 });
 
-final productListStreamProvider = StreamProvider<List<Product>>((ref) {
+final productListStreamProvider =
+    StreamProvider.autoDispose<List<Product>>((ref) {
+  debugPrint('created productsListStreamProvider');
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProductsList();
 });
 
-final productListFutureProvider = FutureProvider<List<Product>>((ref) {
+final productListFutureProvider =
+    FutureProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
 });
 
-final productProvider = StreamProvider.family<Product?, String>((ref, id) {
-  final productRepository = ref.watch(productsRepositoryProvider);
-  return productRepository.watchProduct(id);
-});
+final productProvider = StreamProvider.autoDispose.family<Product?, String>(
+  (ref, id) {
+    debugPrint('created productProvider with id: $id');
+    ref.onDispose(() => debugPrint('disposed productProvider'));
+    final productRepository = ref.watch(productsRepositoryProvider);
+    return productRepository.watchProduct(id);
+  },
+  // disposeDelay: const Duration(seconds: 10),
+  // cacheTime: const Duration(seconds: 10),
+);
