@@ -7,4 +7,20 @@ void main() {
     final productRepository = FakeProductsRepository();
     expect(productRepository.getProductsList(), kTestProducts);
   });
+
+  test('getProduct(1) returns first item', () {
+    final productRepository = FakeProductsRepository();
+    expect(
+      productRepository.getProduct('1'),
+      kTestProducts[0],
+    );
+  });
+
+  test('getProduct(100) returns null', () {
+    final productRepository = FakeProductsRepository();
+    expect(
+      () => productRepository.getProduct('100'),
+      throwsStateError,
+    );
+  });
 }
