@@ -22,22 +22,60 @@ void main() {
       expect(controller.debugState, const AsyncData<void>(null));
     });
 
-    test('signOut success', () async {
-      when(authRepository.signOut).thenAnswer((_) => Future.value());
+    test(
+      'signOut success',
+      () async {
+        when(authRepository.signOut).thenAnswer((_) => Future.value());
 
-      await controller.signOut();
-      expect(controller.debugState, const AsyncData<void>(null));
-      verify(authRepository.signOut).called(1);
-    });
+        // expect later
+        expectLater(
+          controller.stream,
+          emitsInOrder(
+            const [
+              AsyncLoading<void>(),
+              AsyncData<void>(null),
+            ],
+          ),
+        );
 
-    test('signOut failure', () async {
-      final exception = Exception('Connection failed');
-      when(authRepository.signOut).thenThrow(exception);
+        await controller.signOut();
 
-      await controller.signOut();
-      verify(authRepository.signOut).called(1);
-      expect(controller.debugState.hasError, true);
-      expect(controller.debugState, isA<AsyncError>());
-    });
+        verify(authRepository.signOut).called(1);
+      },
+      timeout: const Timeout(
+        Duration(milliseconds: 500),
+      ),
+    );
+
+    test(
+      'signOut failure',
+      () async {
+        final exception = Exception('Connection failed');
+        when(authRepository.signOut).thenThrow(exception);
+
+        // expect later
+        expectLater(
+          controller.stream,
+          emitsInOrder(
+            [
+              const AsyncLoading<void>(),
+              //AsyncError<void>(exception),
+              predicate<AsyncValue<void>>((value) {
+                expect(value.hasError, true);
+                return true;
+              })
+            ],
+          ),
+        );
+
+        await controller.signOut();
+        verify(authRepository.signOut).called(1);
+        // expect(controller.debugState.hasError, true);
+        // expect(controller.debugState, isA<AsyncError>());
+      },
+      timeout: const Timeout(
+        Duration(milliseconds: 500),
+      ),
+    );
   });
 }
