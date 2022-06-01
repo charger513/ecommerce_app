@@ -11,10 +11,10 @@ class InMemoryStore<T> {
   /// The output stream that can be used to listen to the data
   Stream<T> get stream => _subject.stream;
 
-  // A synchronous getter for the current value
+  /// A synchronous getter for the current value
   T get value => _subject.value;
 
-  // A setter for updating the value
+  /// A setter for updating the value
   set value(T value) => _subject.add(value);
 
   /// Don't forget to call this when done

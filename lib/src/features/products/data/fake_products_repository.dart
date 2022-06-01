@@ -1,20 +1,20 @@
 import 'package:ecommerce_app/src/constants/test_products.dart';
 import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:ecommerce_app/src/utils/delay.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeProductsRepository {
+  FakeProductsRepository({this.addDelay = true});
   final bool addDelay;
   final List<Product> _products = kTestProducts;
-
-  FakeProductsRepository({this.addDelay = true});
 
   List<Product> getProductsList() {
     return _products;
   }
 
-  Product? getProduct(String id) => _getProduct(_products, id);
+  Product? getProduct(String id) {
+    return _getProduct(_products, id);
+  }
 
   Future<List<Product>> fetchProductsList() async {
     await delay(addDelay);
@@ -43,24 +43,20 @@ final productsRepositoryProvider = Provider<FakeProductsRepository>((ref) {
   return FakeProductsRepository();
 });
 
-final productListStreamProvider =
+final productsListStreamProvider =
     StreamProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.watchProductsList();
 });
 
-final productListFutureProvider =
+final productsListFutureProvider =
     FutureProvider.autoDispose<List<Product>>((ref) {
   final productsRepository = ref.watch(productsRepositoryProvider);
   return productsRepository.fetchProductsList();
 });
 
-final productProvider = StreamProvider.autoDispose.family<Product?, String>(
-  (ref, id) {
-    ref.onDispose(() => debugPrint('disposed productProvider'));
-    final productRepository = ref.watch(productsRepositoryProvider);
-    return productRepository.watchProduct(id);
-  },
-  // disposeDelay: const Duration(seconds: 10),
-  // cacheTime: const Duration(seconds: 10),
-);
+final productProvider =
+    StreamProvider.autoDispose.family<Product?, String>((ref, id) {
+  final productsRepository = ref.watch(productsRepositoryProvider);
+  return productsRepository.watchProduct(id);
+});

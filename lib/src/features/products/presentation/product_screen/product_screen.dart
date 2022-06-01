@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Shows the product page for a given product ID.
 class ProductScreen extends StatelessWidget {
-  const ProductScreen({Key? key, required this.productId}) : super(key: key);
+  const ProductScreen({super.key, required this.productId});
   final String productId;
 
   @override
@@ -26,7 +26,7 @@ class ProductScreen extends StatelessWidget {
     return Scaffold(
       appBar: const HomeAppBar(),
       body: Consumer(
-        builder: (context, ref, child) {
+        builder: (context, ref, _) {
           final productValue = ref.watch(productProvider(productId));
           return AsyncValueWidget<Product?>(
             value: productValue,
@@ -54,7 +54,7 @@ class ProductScreen extends StatelessWidget {
 /// - leave a review
 /// - add to cart
 class ProductDetails extends StatelessWidget {
-  const ProductDetails({Key? key, required this.product}) : super(key: key);
+  const ProductDetails({super.key, required this.product});
   final Product product;
 
   @override

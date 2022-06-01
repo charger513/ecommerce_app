@@ -9,14 +9,12 @@ import '../../../../mocks.dart';
 void main() {
   late MockAuthRepository authRepository;
   late AccountScreenController controller;
-
   setUp(() {
     authRepository = MockAuthRepository();
     controller = AccountScreenController(
       authRepository: authRepository,
     );
   });
-
   group('AccountScreenController', () {
     test('initial state is AsyncValue.data', () {
       verifyNever(authRepository.signOut);
@@ -24,47 +22,42 @@ void main() {
     });
 
     test('signOut success', () async {
-      when(authRepository.signOut).thenAnswer((_) => Future.value());
-
+      // setup
+      when(authRepository.signOut).thenAnswer(
+        (_) => Future.value(),
+      );
       // expect later
       expectLater(
         controller.stream,
-        emitsInOrder(
-          const [
-            AsyncLoading<void>(),
-            AsyncData<void>(null),
-          ],
-        ),
+        emitsInOrder(const [
+          AsyncLoading<void>(),
+          AsyncData<void>(null),
+        ]),
       );
-
+      // run
       await controller.signOut();
-
+      // verify
       verify(authRepository.signOut).called(1);
     });
-
     test('signOut failure', () async {
+      // setup
       final exception = Exception('Connection failed');
       when(authRepository.signOut).thenThrow(exception);
-
       // expect later
       expectLater(
         controller.stream,
-        emitsInOrder(
-          [
-            const AsyncLoading<void>(),
-            //AsyncError<void>(exception),
-            predicate<AsyncValue<void>>((value) {
-              expect(value.hasError, true);
-              return true;
-            })
-          ],
-        ),
+        emitsInOrder([
+          const AsyncLoading<void>(),
+          predicate<AsyncValue<void>>((value) {
+            expect(value.hasError, true);
+            return true;
+          }),
+        ]),
       );
-
+      // run
       await controller.signOut();
+      // verify
       verify(authRepository.signOut).called(1);
-      // expect(controller.debugState.hasError, true);
-      // expect(controller.debugState, isA<AsyncError>());
     });
   });
 }

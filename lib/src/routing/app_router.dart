@@ -26,7 +26,6 @@ enum AppRoute {
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
-
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
@@ -36,8 +35,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         if (state.location == '/signIn') {
           return '/';
         }
-      } else if (state.location == '/account' || state.location == '/orders') {
-        return '/';
+      } else {
+        if (state.location == '/account' || state.location == '/orders') {
+          return '/';
+        }
       }
       return null;
     },

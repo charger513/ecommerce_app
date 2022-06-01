@@ -4,13 +4,11 @@ import 'package:ecommerce_app/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeAuthRepository {
+  FakeAuthRepository({this.addDelay = true});
   final bool addDelay;
   final _authState = InMemoryStore<AppUser?>(null);
 
-  FakeAuthRepository({this.addDelay = true});
-
   Stream<AppUser?> authStateChanges() => _authState.stream;
-
   AppUser? get currentUser => _authState.value;
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {

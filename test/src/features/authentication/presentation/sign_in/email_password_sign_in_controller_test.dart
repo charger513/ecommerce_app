@@ -28,19 +28,25 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.signIn,
       );
-
+      // expect later
+      expectLater(
+        controller.stream,
+        emitsInOrder([
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.signIn,
+            value: const AsyncLoading<void>(),
+          ),
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.signIn,
+            value: const AsyncData<void>(null),
+          ),
+        ]),
+      );
       // run
       final result = await controller.submit(testEmail, testPassword);
+      // verify
       expect(result, true);
-      expect(
-        controller.debugState,
-        EmailPasswordSignInState(
-          formType: EmailPasswordSignInFormType.signIn,
-          value: const AsyncData<void>(null),
-        ),
-      );
     });
-
     test('''
     Given formType is signIn
     When signInWithEmailAndPassword fails
@@ -58,21 +64,26 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.signIn,
       );
-
+      // expect later
+      expectLater(
+        controller.stream,
+        emitsInOrder([
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.signIn,
+            value: const AsyncLoading<void>(),
+          ),
+          predicate<EmailPasswordSignInState>((state) {
+            expect(state.formType, EmailPasswordSignInFormType.signIn);
+            expect(state.value.hasError, true);
+            return true;
+          }),
+        ]),
+      );
       // run
       final result = await controller.submit(testEmail, testPassword);
+      // verify
       expect(result, false);
-      expect(
-        controller.debugState,
-        // using predicate since we can't match the stack trace
-        predicate<EmailPasswordSignInState>((state) {
-          expect(state.formType, EmailPasswordSignInFormType.signIn);
-          expect(state.value.hasError, true);
-          return true;
-        }),
-      );
     });
-
     test('''
     Given formType is register
     When createUserWithEmailAndPassword succeeds
@@ -89,19 +100,25 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.register,
       );
-
+      // expect later
+      expectLater(
+        controller.stream,
+        emitsInOrder([
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.register,
+            value: const AsyncLoading<void>(),
+          ),
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.register,
+            value: const AsyncData<void>(null),
+          ),
+        ]),
+      );
       // run
       final result = await controller.submit(testEmail, testPassword);
+      // verify
       expect(result, true);
-      expect(
-        controller.debugState,
-        EmailPasswordSignInState(
-          formType: EmailPasswordSignInFormType.register,
-          value: const AsyncData<void>(null),
-        ),
-      );
     });
-
     test('''
     Given formType is register
     When createUserWithEmailAndPassword fails
@@ -119,22 +136,27 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.register,
       );
-
+      // expect later
+      expectLater(
+        controller.stream,
+        emitsInOrder([
+          EmailPasswordSignInState(
+            formType: EmailPasswordSignInFormType.register,
+            value: const AsyncLoading<void>(),
+          ),
+          predicate<EmailPasswordSignInState>((state) {
+            expect(state.formType, EmailPasswordSignInFormType.register);
+            expect(state.value.hasError, true);
+            return true;
+          }),
+        ]),
+      );
       // run
       final result = await controller.submit(testEmail, testPassword);
+      // verify
       expect(result, false);
-      expect(
-        controller.debugState,
-        // using predicate since we can't match the stack trace
-        predicate<EmailPasswordSignInState>((state) {
-          expect(state.formType, EmailPasswordSignInFormType.register);
-          expect(state.value.hasError, true);
-          return true;
-        }),
-      );
     });
   });
-
   group('updateFormType', () {
     test('''
     Given formType is signIn
@@ -147,10 +169,9 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.signIn,
       );
-
       // run
       controller.updateFormType(EmailPasswordSignInFormType.register);
-
+      // verify
       expect(
         controller.debugState,
         EmailPasswordSignInState(
@@ -171,10 +192,9 @@ void main() {
         authRepository: authRepository,
         formType: EmailPasswordSignInFormType.register,
       );
-
       // run
       controller.updateFormType(EmailPasswordSignInFormType.signIn);
-
+      // verify
       expect(
         controller.debugState,
         EmailPasswordSignInState(
