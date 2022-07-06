@@ -11,13 +11,12 @@ import 'features/authentication/auth_robot.dart';
 import 'goldens/golden_robot.dart';
 
 class Robot {
-  final WidgetTester tester;
-  final AuthRobot auth;
-  final GoldenRobot golden;
-
   Robot(this.tester)
       : auth = AuthRobot(tester),
         golden = GoldenRobot(tester);
+  final WidgetTester tester;
+  final AuthRobot auth;
+  final GoldenRobot golden;
 
   Future<void> pumpMyApp() async {
     final productsRepository = FakeProductsRepository(addDelay: false);
@@ -42,7 +41,7 @@ class Robot {
   Future<void> openPopupMenu() async {
     final finder = find.byType(MoreMenuButton);
     final matches = finder.evaluate();
-    // if an item is found, it means that we area running
+    // if an item is found, it means that we're running
     // on a small window and can tap to reveal the menu
     if (matches.isNotEmpty) {
       await tester.tap(finder);

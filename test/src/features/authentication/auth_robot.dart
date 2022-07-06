@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/src/common_widgets/alert_dialogs.dart';
+import 'package:ecommerce_app/src/common_widgets/custom_text_button.dart';
 import 'package:ecommerce_app/src/common_widgets/primary_button.dart';
 import 'package:ecommerce_app/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:ecommerce_app/src/features/authentication/presentation/account/account_screen.dart';
@@ -10,9 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class AuthRobot {
-  final WidgetTester tester;
-
   AuthRobot(this.tester);
+  final WidgetTester tester;
 
   Future<void> openEmailPasswordSignInScreen() async {
     final finder = find.byKey(MoreMenuButton.signInKey);
@@ -43,10 +43,17 @@ class AuthRobot {
     );
   }
 
-  Future<void> tapEmailPasswordSubmitButton() async {
+  Future<void> tapEmailAndPasswordSubmitButton() async {
     final primaryButton = find.byType(PrimaryButton);
     expect(primaryButton, findsOneWidget);
     await tester.tap(primaryButton);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> tapFormToggleButton() async {
+    final toggleButton = find.byType(CustomTextButton);
+    expect(toggleButton, findsOneWidget);
+    await tester.tap(toggleButton);
     await tester.pumpAndSettle();
   }
 
@@ -62,10 +69,20 @@ class AuthRobot {
     await tester.enterText(passwordField, password);
   }
 
+  void expectCreateAccountButtonFound() {
+    final dialogTitle = find.text('Create an account');
+    expect(dialogTitle, findsOneWidget);
+  }
+
+  void expectCreateAccountButtonNotFound() {
+    final dialogTitle = find.text('Create an account');
+    expect(dialogTitle, findsNothing);
+  }
+
   Future<void> signInWithEmailAndPassword() async {
     await enterEmail('test@test.com');
     await enterPassword('test1234');
-    await tapEmailPasswordSubmitButton();
+    await tapEmailAndPasswordSubmitButton();
   }
 
   Future<void> openAccountScreen() async {

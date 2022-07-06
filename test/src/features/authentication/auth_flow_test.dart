@@ -11,7 +11,6 @@ void main() {
     await r.auth.openEmailPasswordSignInScreen();
     await r.auth.signInWithEmailAndPassword();
     r.expectFindAllProductCards();
-
     await r.openPopupMenu();
     await r.auth.openAccountScreen();
     await r.auth.tapLogoutButton();

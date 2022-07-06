@@ -5,7 +5,6 @@ import '../test/src/robot.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
   testWidgets('Sign in and sign out flow', (tester) async {
     final r = Robot(tester);
     await r.pumpMyApp();
@@ -14,7 +13,6 @@ void main() {
     await r.auth.openEmailPasswordSignInScreen();
     await r.auth.signInWithEmailAndPassword();
     r.expectFindAllProductCards();
-
     await r.openPopupMenu();
     await r.auth.openAccountScreen();
     await r.auth.tapLogoutButton();
