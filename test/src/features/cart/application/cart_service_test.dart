@@ -15,36 +15,32 @@ void main() {
   setUpAll(() {
     registerFallbackValue(const Cart());
   });
+  const testUser = AppUser(uid: 'abc');
 
   late MockAuthRepository authRepository;
   late MockRemoteCartRepository remoteCartRepository;
   late MockLocalCartRepository localCartRepository;
-
   setUp(() {
     authRepository = MockAuthRepository();
     remoteCartRepository = MockRemoteCartRepository();
     localCartRepository = MockLocalCartRepository();
   });
 
-  const testUser = AppUser(uid: 'abc');
-
   CartService makeCartService() {
     final container = ProviderContainer(
       overrides: [
         authRepositoryProvider.overrideWithValue(authRepository),
         localCartRepositoryProvider.overrideWithValue(localCartRepository),
-        remoteCartRepositoryProvider.overrideWithValue(remoteCartRepository)
+        remoteCartRepositoryProvider.overrideWithValue(remoteCartRepository),
       ],
     );
-
     addTearDown(container.dispose);
-
     return container.read(cartServiceProvider);
   }
 
   group('setItem', () {
     test('null user, writes item to local cart', () async {
-      //setup
+      // setup
       const expectedCart = Cart({'123': 1});
       when(() => authRepository.currentUser).thenReturn(null);
       when(localCartRepository.fetchCart).thenAnswer(
@@ -54,17 +50,21 @@ void main() {
         (_) => Future.value(),
       );
       final cartService = makeCartService();
-      //run
+      // run
       await cartService.setItem(
         const Item(productId: '123', quantity: 1),
       );
       // verify
-      verify(() => localCartRepository.setCart(expectedCart)).called(1);
-      verifyNever(() => remoteCartRepository.setCart(any(), any()));
+      verify(
+        () => localCartRepository.setCart(expectedCart),
+      ).called(1);
+      verifyNever(
+        () => remoteCartRepository.setCart(any(), any()),
+      );
     });
 
     test('non-null user, writes item to remote cart', () async {
-      //setup
+      // setup
       const expectedCart = Cart({'123': 1});
       when(() => authRepository.currentUser).thenReturn(testUser);
       when(() => remoteCartRepository.fetchCart(testUser.uid)).thenAnswer(
@@ -75,14 +75,17 @@ void main() {
         (_) => Future.value(),
       );
       final cartService = makeCartService();
-      //run
+      // run
       await cartService.setItem(
         const Item(productId: '123', quantity: 1),
       );
       // verify
-      verify(() => remoteCartRepository.setCart(testUser.uid, expectedCart))
-          .called(1);
-      verifyNever(() => localCartRepository.setCart(any()));
+      verify(
+        () => remoteCartRepository.setCart(testUser.uid, expectedCart),
+      ).called(1);
+      verifyNever(
+        () => localCartRepository.setCart(any()),
+      );
     });
   });
 

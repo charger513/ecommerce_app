@@ -8,9 +8,8 @@ import 'package:ecommerce_app/src/features/products/domain/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CartService {
-  final Ref ref;
-
   CartService(this.ref);
+  final Ref ref;
 
   /// fetch the cart from the local or remote repository
   /// depending on the user auth state
@@ -30,7 +29,7 @@ class CartService {
     if (user != null) {
       await ref.read(remoteCartRepositoryProvider).setCart(user.uid, cart);
     } else {
-      ref.read(localCartRepositoryProvider).setCart(cart);
+      await ref.read(localCartRepositoryProvider).setCart(cart);
     }
   }
 

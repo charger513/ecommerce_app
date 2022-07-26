@@ -7,10 +7,9 @@ import 'package:sembast/sembast_io.dart';
 import 'package:sembast_web/sembast_web.dart';
 
 class SembastCartRepository implements LocalCartRepository {
+  SembastCartRepository(this.db);
   final Database db;
   final store = StoreRef.main();
-
-  SembastCartRepository(this.db);
 
   static Future<Database> createDatabase(String filename) async {
     if (!kIsWeb) {
